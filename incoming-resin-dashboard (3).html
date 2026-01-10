@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Incoming Resin Spec Validation</title>
+  <style>
+    :root {
+      --bg: #081a2b;          /* deep water blue */
+      --panel: #0b253d;
+      --panel2: #0e2f4f;
+      --text: #e6f2ff;
+      --muted: #9cc3e6;
+      --accent: #3ba4ff;     /* brighter blue */
+      --ok: #22c55e;
+      --bad: #ef4444;
+      --warn: #f59e0b;
+      --border: #2b5f8a;
+
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel2: #0b1220;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #2563eb;
+      --ok: #22c55e;
+      --bad: #ef4444;
+      --warn: #f59e0b;
+      --border: #374151;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(59,164,255,.35), transparent 60%),
+        radial-gradient(900px 500px at 80% 30%, rgba(0,180,216,.25), transparent 55%),
+        linear-gradient(180deg, #04111f 0%, #06203a 50%, #031425 100%);
+ height: 100%; }
+    body {
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(59,164,255,.35), transparent 60%),
+        radial-gradient(900px 500px at 80% 30%, rgba(0,180,216,.25), transparent 55%),
+        linear-gradient(180deg, #04111f 0%, #06203a 50%, #031425 100%);
+
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(37,99,235,.18), transparent 60%),
+                  radial-gradient(900px 500px at 80% 30%, rgba(34,197,94,.10), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 18px 18px 40px; }
+    .header { padding: 14px 4px 10px; }
+    h1 { margin: 0; font-size: 28px; letter-spacing: .2px; }
+    .sub { margin-top: 6px; color: var(--muted); }
+
+    .toolbar {
+      margin-top: 16px;
+      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(11,18,32,.9));
+      border: 1px solid rgba(55,65,81,.7);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 280px 280px 1fr;
+      gap: 14px;
+      align-items: end;
+      box-shadow: var(--shadow);
+    }
+
+    label { display:block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    select, input[type="text"] {
+      background: rgba(8, 32, 64, 0.95);
+      border: 1px solid rgba(59,164,255,.7);
+      color: #e6f2ff;
+      font-weight: 600;
+
+      width: 100%;
+      background: rgba(15,23,42,.65);
+      color: var(--text);
+      border: 1px solid rgba(55,65,81,.8);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline: none;
+    }
+    select:focus, input:focus {
+      border-color: #3ba4ff;
+      box-shadow: 0 0 0 3px rgba(59,164,255,.35);
+ border-color: rgba(37,99,235,.9); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+
+    .btn-row { display:flex; justify-content: flex-end; gap: 10px; }
+    button {
+      background: rgba(15,23,42,.7);
+      color: var(--text);
+      border: 1px solid rgba(55,65,81,.8);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+    button:hover { border-color: rgba(37,99,235,.9); }
+
+    .summary {
+      margin-top: 14px;
+      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(11,18,32,.9));
+      border: 1px solid rgba(55,65,81,.7);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .summary-left { display:flex; flex-direction: column; gap: 4px; }
+    .summary-title { font-weight: 800; letter-spacing: .2px; }
+    .summary-sub { color: var(--muted); font-size: 13px; }
+
+    .chips { display:flex; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      display:flex; align-items:center; gap: 8px;
+      border: 1px solid rgba(55,65,81,.8);
+      background: rgba(15,23,42,.55);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 999px; background: rgba(156,163,175,.9); }
+    .dot.ok { background: rgba(34,197,94,.9); }
+    .dot.bad { background: rgba(239,68,68,.9); }
+    .dot.na { background: rgba(156,163,175,.9); }
+
+    .grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(11,18,32,.9));
+      border: 1px solid rgba(55,65,81,.7);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      min-height: 150px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 10px;
+    }
+
+    .card-head { display:flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .title { font-weight: 700; font-size: 18px; }
+    .unit { color: var(--muted); font-size: 13px; }
+
+    .status-row { display:flex; justify-content: space-between; align-items: center; gap: 10px; }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      border: 1px dashed rgba(55,65,81,.8);
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(15,23,42,.35);
+      min-height: 42px;
+      display:flex;
+      align-items:center;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .4px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,.8);
+      background: rgba(15,23,42,.55);
+      white-space: nowrap;
+    }
+    .badge.ok { border-color: rgba(34,197,94,.55); color: #b7f7cd; }
+    .badge.bad { border-color: rgba(239,68,68,.55); color: #ffd0d0; }
+    .badge.na { border-color: rgba(156,163,175,.55); color: #d1d5db; }
+
+    .spec { color: var(--muted); font-size: 13px; }
+    .hidden { display:none !important; }
+
+    @media (max-width: 980px) {
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .btn-row { grid-column: 1 / -1; }
+      .grid { grid-template-columns: repeat(2, minmax(240px, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .toolbar { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .summary { flex-direction: column; align-items: flex-start; }
+    }
+  
+select {
+  font-weight: 700;
+}
+
+select option {
+  font-weight: 700;
+  background-color: #0b253d;
+  color: #e6f2ff;
+}
+
+</style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h1>Incoming Resin Spec Validation</h1>
+      <div class="sub">Select Resin type and Testing category → enter values to reveal & validate against specs</div>
+    </div>
+
+    <div class="toolbar">
+      <div>
+        <label for="resinSel">Resin type</label>
+        <select id="resinSel"></select>
+      </div>
+
+      <div>
+        <label for="catSel">Testing category</label>
+        <select id="catSel"></select>
+      </div>
+
+      <div class="btn-row">
+        <button id="clearBtn" type="button">Clear</button>
+      </div>
+    </div>
+
+    <div id="summary" class="summary">
+      <div class="summary-left">
+        <div class="summary-title">Validation Summary</div>
+        <div id="summarySub" class="summary-sub">Select a resin/category to begin.</div>
+      </div>
+      <div class="chips">
+        <div class="chip"><span class="dot ok"></span><span id="passCount">0</span> PASS</div>
+        <div class="chip"><span class="dot bad"></span><span id="failCount">0</span> FAIL</div>
+        <div class="chip"><span class="dot na"></span><span id="pendingCount">0</span> Pending</div>
+      </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script>
+    // Generated from spec_limits.csv
+    const SPECS = {
+  "A-464 CL": {
+    "Full Testing": [
+      {
+        "id": "total_capacity_cl",
+        "label": "Total Capacity CL",
+        "unit": "Meq/ml",
+        "min": 1.2,
+        "max": null,
+        "decimals": 1
+      },
+      {
+        "id": "moisture_cl",
+        "label": "Moisture CL",
+        "unit": "%",
+        "min": 50.0,
+        "max": 59.0,
+        "decimals": 0
+      },
+      {
+        "id": "mixed_bed_kinetics_di",
+        "label": "Mixed Bed Kinetics DI",
+        "unit": "µS",
+        "min": null,
+        "max": 15.0,
+        "decimals": 0
+      },
+      {
+        "id": "mixed_bed_kinetics_hard",
+        "label": "Mixed Bed Kinetics Hard",
+        "unit": "µS",
+        "min": null,
+        "max": 15.0,
+        "decimals": 0
+      },
+      {
+        "id": "whole_beads",
+        "label": "Whole Beads",
+        "unit": "%",
+        "min": 90.0,
+        "max": null,
+        "decimals": 0
+      },
+      {
+        "id": "16_mesh",
+        "label": "+16 Mesh",
+        "unit": "% received",
+        "min": 0.0,
+        "max": 5.0,
+        "decimals": 0
+      },
+      {
+        "id": "50_mesh",
+        "label": "-50 Mesh",
+        "unit": "% Through",
+        "min": 0.0,
+        "max": 1.0,
+        "decimals": 0
+      },
+      {
+        "id": "effective_size",
+        "label": "Effective Size",
+        "unit": "mm",
+        "min": 0.45,
+        "max": 0.6,
+        "decimals": 2
+      }
+    ],
+    "Limited Testing": [
+      {
+        "id": "moisture_cl",
+        "label": "Moisture CL",
+        "unit": "%",
+        "min": 50.0,
+        "max": 59.0,
+        "decimals": 0
+      }
+    ]
+  },
+  "C-211 H": {
+    "Full Testing": [
+      {
+        "id": "total_capacity_h",
+        "label": "Total Capacity H",
+        "unit": "Meq/ml",
+        "min": 1.8,
+        "max": null,
+        "decimals": 1
+      },
+      {
+        "id": "moisture_h",
+        "label": "Moisture H",
+        "unit": "%",
+        "min": 50.0,
+        "max": 56.0,
+        "decimals": 0
+      },
+      {
+        "id": "h",
+        "label": "%H",
+        "unit": "%",
+        "min": 99.0,
+        "max": null,
+        "decimals": 0
+      },
+      {
+        "id": "impurities_any",
+        "label": "Impurities (Any)",
+        "unit": "ppm",
+        "min": 0.0,
+        "max": 50.0,
+        "decimals": 0
+      },
+      {
+        "id": "mixed_bed_kinetics_di",
+        "label": "Mixed Bed Kinetics DI",
+        "unit": "µS",
+        "min": null,
+        "max": 15.0,
+        "decimals": 0
+      },
+      {
+        "id": "mixed_bed_kinetics_hard",
+        "label": "Mixed Bed Kinetics Hard",
+        "unit": "µS",
+        "min": null,
+        "max": 15.0,
+        "decimals": 0
+      },
+      {
+        "id": "whole_beads",
+        "label": "Whole Beads",
+        "unit": "%",
+        "min": 90.0,
+        "max": null,
+        "decimals": 0
+      },
+      {
+        "id": "16_mesh",
+        "label": "+16 Mesh",
+        "unit": "% received",
+        "min": 0.0,
+        "max": 5.0,
+        "decimals": 0
+      },
+      {
+        "id": "50_mesh",
+        "label": "-50 Mesh",
+        "unit": "% Through",
+        "min": 0.0,
+        "max": 1.0,
+        "decimals": 0
+      }
+    ],
+    "Limited Testing": [
+      {
+        "id": "full_only",
+        "label": "Full Only",
+        "unit": "",
+        "min": null,
+        "max": null,
+        "decimals": 0
+      }
+    ]
+  },
+  "A-254 CL": {
+    "Full Testing": [
+      {
+        "id": "total_capacity_cl",
+        "label": "Total Capacity CL",
+        "unit": "Meq/ml",
+        "min": 1.2,
+        "max": null,
+        "decimals": 1
+      },
+      {
+        "id": "moisture_cl",
+        "label": "Moisture CL",
+        "unit": "%",
+        "min": 42.0,
+        "max": 50.0,
+        "decimals": 0
+      },
+      {
+        "id": "mixed_bed_kinetics_di",
+        "label": "Mixed Bed Kinetics DI",
+        "unit": "µS",
+        "min": null,
+        "max": 17.0,
+        "decimals": 0
+      },
+      {
+        "id": "mixed_bed_kinetics_hard",
+        "label": "Mixed Bed Kinetics Hard",
+        "unit": "µS",
+        "min": null,
+        "max": 15.0,
+        "decimals": 0
+      },
+      {
+        "id": "effective_size",
+        "label": "Effective Size",
+        "unit": "mm",
+        "min": 0.54,
+        "max": 0.64,
+        "decimals": 2
+      },
+      {
+        "id": "uniformity_coefficient",
+        "label": "Uniformity Coefficient",
+        "unit": "",
+        "min": 1.2,
+        "max": null,
+        "decimals": 1
+      },
+      {
+        "id": "whole_beads",
+        "label": "Whole Beads",
+        "unit": "%",
+        "min": 95.0,
+        "max": null,
+        "decimals": 0
+      },
+      {
+        "id": "friability_avg",
+        "label": "Friability Avg",
+        "unit": "",
+        "min": 350.0,
+        "max": null,
+        "decimals": 0
+      }
+    ],
+    "Limited Testing": [
+      {
+        "id": "moisture_cl",
+        "label": "Moisture CL",
+        "unit": "%",
+        "min": 42.0,
+        "max": 50.0,
+        "decimals": 0
+      }
+    ]
+  }
+};
+
+    const resinSel = document.getElementById("resinSel");
+    const catSel   = document.getElementById("catSel");
+    const grid     = document.getElementById("grid");
+    const clearBtn = document.getElementById("clearBtn");
+
+    const summarySub     = document.getElementById("summarySub");
+    const passCountEl    = document.getElementById("passCount");
+    const failCountEl    = document.getElementById("failCount");
+    const pendingCountEl = document.getElementById("pendingCount");
+
+    function uniqCatsForResin(resin) {
+      const cats = Object.keys(SPECS[resin] || {});
+      // Force order: Full Testing then Limited Testing (if present)
+      const ordered = [];
+      if (cats.includes("Full Testing")) ordered.push("Full Testing");
+      if (cats.includes("Limited Testing")) ordered.push("Limited Testing");
+      for (const c of cats) if (!ordered.includes(c)) ordered.push(c);
+      return ordered;
+    }
+
+    function fmtSpec(t) {
+      const hasMin = t.min !== null && t.min !== undefined;
+      const hasMax = t.max !== null && t.max !== undefined;
+      if (!hasMin && !hasMax) return "Spec: (not set)";
+      if (hasMin && hasMax) return `Spec: ${t.min} – ${t.max} ${t.unit}`;
+      if (hasMin) return `Spec: ≥ ${t.min} ${t.unit}`;
+      return `Spec: ≤ ${t.max} ${t.unit}`;
+    }
+
+    function evaluate(num, t) {
+      const minOk = (t.min === null || t.min === undefined) ? true : num >= t.min;
+      const maxOk = (t.max === null || t.max === undefined) ? true : num <= t.max;
+      return (minOk && maxOk) ? "ok" : "bad";
+    }
+
+    // Enforce numeric input: digits + one dot + optional leading '-'
+    function sanitizeNumeric(raw) {
+      if (raw === "") return "";
+      let s = String(raw);
+      s = s.replace(/[^\d.\-]/g, "");
+      s = s.replace(/(?!^)-/g, "");
+      if (!s.startsWith("-")) s = s.replace(/-/g, "");
+      const firstDot = s.indexOf(".");
+      if (firstDot !== -1) {
+        s = s.slice(0, firstDot + 1) + s.slice(firstDot + 1).replace(/\./g, "");
+      }
+      if (s === "-" || s === "." || s === "-.") return s;
+      return s;
+    }
+
+    // Auto-format decimals on blur (if value is a valid number)
+    function formatToDecimals(valueStr, decimals) {
+      if (valueStr === "" || valueStr === "-" || valueStr === "." || valueStr === "-.") return valueStr;
+      const n = Number(valueStr);
+      if (Number.isNaN(n)) return valueStr;
+      if (decimals === null || decimals === undefined) return String(n);
+      return n.toFixed(decimals);
+    }
+
+    function updateSummary(tests, states) {
+      let pass = 0, fail = 0, pending = 0;
+      for (const st of states) {
+        if (st === "ok") pass++;
+        else if (st === "bad") fail++;
+        else pending++;
+      }
+      passCountEl.textContent = pass;
+      failCountEl.textContent = fail;
+      pendingCountEl.textContent = pending;
+
+      const total = tests.length;
+      summarySub.textContent = `${pass} of ${total} passed • ${fail} failed • ${pending} pending`;
+    }
+
+    function render() {
+      const resin = resinSel.value;
+      const cat   = catSel.value;
+      const tests = (SPECS[resin] && SPECS[resin][cat]) ? SPECS[resin][cat] : [];
+      grid.innerHTML = "";
+
+      if (!tests.length) {
+        passCountEl.textContent = "0";
+        failCountEl.textContent = "0";
+        pendingCountEl.textContent = "0";
+        summarySub.textContent = `No tests configured for ${resin} → ${cat}.`;
+
+        const empty = document.createElement("div");
+        empty.className = "card";
+        empty.innerHTML = `
+          <div class="card-head">
+            <div class="title">No tests configured</div>
+            <div class="unit">—</div>
+          </div>
+          <div class="spec">No parameters found for <b>${resin}</b> → <b>${cat}</b>.</div>
+          <div class="hint">Nothing to validate yet.</div>
+        `;
+        grid.appendChild(empty);
+        return;
+      }
+
+      const statesById = new Map();
+      function recomputeSummary() {
+        const states = tests.map(t => statesById.get(t.id) || "na");
+        updateSummary(tests, states);
+      }
+
+      for (const t of tests) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const savedKey = `val:${resin}:${cat}:${t.id}`;
+        const savedVal = localStorage.getItem(savedKey) ?? "";
+
+        card.innerHTML = `
+          <div class="card-head">
+            <div class="title">${t.label}</div>
+            <div class="unit">${t.unit || ""}</div>
+          </div>
+
+          <div class="status-row">
+            <input type="text"
+                   inputmode="decimal"
+                   autocomplete="off"
+                   spellcheck="false"
+                   placeholder="Enter value..."
+                   value="${String(savedVal).replaceAll('"', "&quot;")}"
+                   aria-label="${t.label}" />
+            <span class="badge na">—</span>
+          </div>
+
+          <div class="hint">
+            <div class="meta hidden">
+              <div class="spec">${fmtSpec(t)}</div>
+              <div class="msg"></div>
+            </div>
+            <div class="placeholder">Enter a value to validate.</div>
+          </div>
+        `;
+
+        const input = card.querySelector("input");
+        const badge = card.querySelector(".badge");
+        const meta  = card.querySelector(".meta");
+        const msgEl = card.querySelector(".msg");
+        const placeholder = card.querySelector(".placeholder");
+
+        function setState(state) {
+          statesById.set(t.id, state);
+          recomputeSummary();
+          badge.classList.remove("ok", "bad", "na");
+          badge.classList.add(state);
+          badge.textContent = (state === "ok") ? "PASS" : (state === "bad" ? "FAIL" : "—");
+        }
+
+        function updateFromValue(vRaw) {
+          const v = vRaw.trim();
+          const hasValue = v !== "" && v !== "-" && v !== "." && v !== "-.";
+          if (!hasValue) {
+            meta.classList.add("hidden");
+            placeholder.classList.remove("hidden");
+            placeholder.textContent = "Enter a value to validate.";
+            msgEl.textContent = "";
+            setState("na");
+            return;
+          }
+
+          placeholder.classList.add("hidden");
+          meta.classList.remove("hidden");
+
+          const num = Number(v);
+          if (Number.isNaN(num)) {
+            msgEl.textContent = "Invalid number.";
+            setState("bad");
+            return;
+          }
+
+          const state = evaluate(num, t);
+          msgEl.textContent = (state === "ok") ? "Within specification." : "Out of specification.";
+          setState(state);
+        }
+
+        input.addEventListener("input", () => {
+          const sanitized = sanitizeNumeric(input.value);
+          if (sanitized !== input.value) input.value = sanitized;
+          localStorage.setItem(savedKey, input.value.trim());
+          updateFromValue(input.value);
+        });
+
+        input.addEventListener("blur", () => {
+          const formatted = formatToDecimals(input.value.trim(), t.decimals);
+          input.value = formatted;
+          localStorage.setItem(savedKey, formatted);
+          updateFromValue(formatted);
+        });
+
+        input.value = sanitizeNumeric(input.value);
+        updateFromValue(input.value);
+
+        grid.appendChild(card);
+      }
+
+      updateSummary(tests, tests.map(() => "na"));
+    }
+
+    function init() {
+      const resins = Object.keys(SPECS);
+      resinSel.innerHTML = resins.map(r => `<option value="${r}">${r}</option>`).join("");
+      resinSel.value = resins[0];
+
+      function updateCats() {
+        const resin = resinSel.value;
+        const cats = uniqCatsForResin(resin);
+        catSel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join("");
+        catSel.value = cats[0] || "";
+        render();
+      }
+
+      resinSel.addEventListener("change", updateCats);
+      catSel.addEventListener("change", render);
+
+      clearBtn.addEventListener("click", () => {
+        const resin = resinSel.value;
+        const cat = catSel.value;
+        const tests = (SPECS[resin] && SPECS[resin][cat]) ? SPECS[resin][cat] : [];
+        for (const t of tests) localStorage.removeItem(`val:${resin}:${cat}:${t.id}`);
+        render();
+      });
+
+      updateCats();
+    }
+
+    init();
+  </script>
+</body>
+</html>
