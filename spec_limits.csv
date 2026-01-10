@@ -1,29 +1,29 @@
 Resin_code,Test_Panel,Parameter,Min,Max,Unit
 A-464 CL,Full,Total Capacity CL,1.2,,Meq/ml
-A-464 CL,Full,Moisture CL,50.0,59.0,%
-A-464 CL,Full,Mixed Bed Kinetics DI,,15.0,µS
-A-464 CL,Full,Mixed Bed Kinetics Hard,,15.0,µS
-A-464 CL,Full,Whole Beads,90.0,,%
-A-464 CL,Full,+16 Mesh,0.0,5.0,% received
-A-464 CL,Full,-50 Mesh,0.0,1.0,% Through
+A-464 CL,Full,Moisture CL,50,59,%
+A-464 CL,Full,Mixed Bed Kinetics DI,15,,µS
+A-464 CL,Full,Mixed Bed Kinetics Hard,15,,µS
+A-464 CL,Full,Whole Beads,90,,%
+A-464 CL,Full,+16 Mesh,0,5,% received
+A-464 CL,Full,-50 Mesh,0,1,% Through
 A-464 CL,Full,Effective Size,0.45,0.6,mm
-A-464 CL,Limited,Moisture CL,50.0,59.0,%
+A-464 CL,Limited,Moisture CL,50,59,%
 C-211 H,Full,Total Capacity H,1.8,,Meq/ml
-C-211 H,Full,Moisture H,50.0,56.0,%
-C-211 H,Full,%H,99.0,,%
-C-211 H,Full,Impurities (Any),0.0,50.0,ppm
-C-211 H,Full,Mixed Bed Kinetics DI,,15.0,µS
-C-211 H,Full,Mixed Bed Kinetics Hard,,15.0,µS
-C-211 H,Full,Whole Beads,90.0,,%
-C-211 H,Full,+16 Mesh,0.0,5.0,% received
-C-211 H,Full,-50 Mesh,0.0,1.0,% Through
+C-211 H,Full,Moisture H,50,56,%
+C-211 H,Full,%H,99,,%
+C-211 H,Full,Impurities (Any),0,50,ppm
+C-211 H,Full,Mixed Bed Kinetics DI,15,,µS
+C-211 H,Full,Mixed Bed Kinetics Hard,15,,µS
+C-211 H,Full,Whole Beads,90,,%
+C-211 H,Full,+16 Mesh,0,5,% received
+C-211 H,Full,-50 Mesh,0,1,% Through
 C-211 H,Limited,Full Only,,,
 A-254 CL,Full,Total Capacity CL,1.2,,Meq/ml
-A-254 CL,Full,Moisture CL,42.0,50.0,%
-A-254 CL,Full,Mixed Bed Kinetics DI,,17.0,µS
-A-254 CL,Full,Mixed Bed Kinetics Hard,,15.0,µS
+A-254 CL,Full,Moisture CL,42,50,%
+A-254 CL,Full,Mixed Bed Kinetics DI,17,,µS
+A-254 CL,Full,Mixed Bed Kinetics Hard,15,,µS
 A-254 CL,Full,Effective Size,0.54,0.64,mm
 A-254 CL,Full,Uniformity Coefficient,1.2,,
-A-254 CL,Full,Whole Beads,95.0,,%
-A-254 CL,Full,Friability Avg,350.0,,
-A-254 CL,Limited,Moisture CL,42.0,50.0,%
+A-254 CL,Full,Whole Beads,95,,%
+A-254 CL,Full,Friability Avg,350,,
+A-254 CL,Limited,Moisture CL,42,50,%
