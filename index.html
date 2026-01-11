@@ -253,246 +253,71 @@ select option {
 // Papa.parse('spec_limits.csv', ...)
 
     // 
-    const SPECS = {
-  "A-464 CL": {
-    "Full Testing": [
-      {
-        "id": "total_capacity_cl",
-        "label": "Total Capacity CL",
-        "unit": "Meq/ml",
-        "min": 1.2,
-        "max": null,
-        "decimals": 1
-      },
-      {
-        "id": "moisture_cl",
-        "label": "Moisture CL",
-        "unit": "%",
-        "min": 50.0,
-        "max": 59.0,
-        "decimals": 0
-      },
-      {
-        "id": "mixed_bed_kinetics_di",
-        "label": "Mixed Bed Kinetics DI",
-        "unit": "µS",
-        "min": 15.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "mixed_bed_kinetics_hard",
-        "label": "Mixed Bed Kinetics Hard",
-        "unit": "µS",
-        "min": 15.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "whole_beads",
-        "label": "Whole Beads",
-        "unit": "%",
-        "min": 90.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "16_mesh",
-        "label": "+16 Mesh",
-        "unit": "% received",
-        "min": 0.0,
-        "max": 5.0,
-        "decimals": 0
-      },
-      {
-        "id": "50_mesh",
-        "label": "-50 Mesh",
-        "unit": "% Through",
-        "min": 0.0,
-        "max": 1.0,
-        "decimals": 0
-      },
-      {
-        "id": "effective_size",
-        "label": "Effective Size",
-        "unit": "mm",
-        "min": 0.45,
-        "max": 0.6,
-        "decimals": 2
-      }
-    ],
-    "Limited Testing": [
-      {
-        "id": "moisture_cl",
-        "label": "Moisture CL",
-        "unit": "%",
-        "min": 50.0,
-        "max": 59.0,
-        "decimals": 0
-      }
-    ]
-  },
-  "C-211 H": {
-    "Full Testing": [
-      {
-        "id": "total_capacity_h",
-        "label": "Total Capacity H",
-        "unit": "Meq/ml",
-        "min": 1.8,
-        "max": null,
-        "decimals": 1
-      },
-      {
-        "id": "moisture_h",
-        "label": "Moisture H",
-        "unit": "%",
-        "min": 50.0,
-        "max": 56.0,
-        "decimals": 0
-      },
-      {
-        "id": "h",
-        "label": "%H",
-        "unit": "%",
-        "min": 99.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "impurities_any",
-        "label": "Impurities (Any)",
-        "unit": "ppm",
-        "min": 0.0,
-        "max": 50.0,
-        "decimals": 0
-      },
-      {
-        "id": "mixed_bed_kinetics_di",
-        "label": "Mixed Bed Kinetics DI",
-        "unit": "µS",
-        "min": 15.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "mixed_bed_kinetics_hard",
-        "label": "Mixed Bed Kinetics Hard",
-        "unit": "µS",
-        "min": 15.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "whole_beads",
-        "label": "Whole Beads",
-        "unit": "%",
-        "min": 90.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "16_mesh",
-        "label": "+16 Mesh",
-        "unit": "% received",
-        "min": 0.0,
-        "max": 5.0,
-        "decimals": 0
-      },
-      {
-        "id": "50_mesh",
-        "label": "-50 Mesh",
-        "unit": "% Through",
-        "min": 0.0,
-        "max": 1.0,
-        "decimals": 0
-      }
-    ],
-    "Limited Testing": [
-      {
-        "id": "full_only",
-        "label": "Full Only",
-        "unit": "",
-        "min": null,
-        "max": null,
-        "decimals": 0
-      }
-    ]
-  },
+const SPECS = {
   "A-254 CL": {
     "Full Testing": [
-      {
-        "id": "total_capacity_cl",
-        "label": "Total Capacity CL",
-        "unit": "Meq/ml",
-        "min": 1.2,
-        "max": null,
-        "decimals": 1
-      },
-      {
-        "id": "moisture_cl",
-        "label": "Moisture CL",
-        "unit": "%",
-        "min": 42.0,
-        "max": 50.0,
-        "decimals": 0
-      },
-      {
-        "id": "mixed_bed_kinetics_di",
-        "label": "Mixed Bed Kinetics DI",
-        "unit": "µS",
-        "min": 17.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "mixed_bed_kinetics_hard",
-        "label": "Mixed Bed Kinetics Hard",
-        "unit": "µS",
-        "min": 15.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "effective_size",
-        "label": "Effective Size",
-        "unit": "mm",
-        "min": 0.54,
-        "max": 0.64,
-        "decimals": 2
-      },
-      {
-        "id": "uniformity_coefficient",
-        "label": "Uniformity Coefficient",
-        "unit": "",
-        "min": 1.2,
-        "max": null,
-        "decimals": 1
-      },
-      {
-        "id": "whole_beads",
-        "label": "Whole Beads",
-        "unit": "%",
-        "min": 95.0,
-        "max": null,
-        "decimals": 0
-      },
-      {
-        "id": "friability_avg",
-        "label": "Friability Avg",
-        "unit": "",
-        "min": 350.0,
-        "max": null,
-        "decimals": 0
-      }
+      { parameter: "Total Capacity CL", min: 1.2, max: null, unit: "Meq/ml" },
+      { parameter: "Moisture CL", min: 42, max: 50, unit: "%" },
+      { parameter: "Mixed Bed Kinetics DI", min: 17, max: null, unit: "µS" },
+      { parameter: "Mixed Bed Kinetics Hard", min: 15, max: null, unit: "µS" },
+      { parameter: "Effective Size", min: 0.54, max: 0.64, unit: "mm" },
+      { parameter: "Uniformity Coefficient", min: 1.2, max: null, unit: "" },
+      { parameter: "Whole Beads", min: 95, max: null, unit: "%" },
+      { parameter: "Friability Avg", min: 350, max: null, unit: "" }
     ],
     "Limited Testing": [
-      {
-        "id": "moisture_cl",
-        "label": "Moisture CL",
-        "unit": "%",
-        "min": 42.0,
-        "max": 50.0,
-        "decimals": 0
+      { parameter: "Moisture CL", min: 42, max: 50, unit: "%" }
+    ]
+  },
+
+  "A-464 CL": {
+    "Full Testing": [
+      { parameter: "Total Capacity CL", min: 1.2, max: null, unit: "Meq/ml" },
+      { parameter: "Moisture CL", min: 50, max: 59, unit: "%" },
+      { parameter: "Mixed Bed Kinetics DI", min: 15, max: null, unit: "µS" },
+      { parameter: "Mixed Bed Kinetics Hard", min: 15, max: null, unit: "µS" },
+      { parameter: "Whole Beads", min: 90, max: null, unit: "%" },
+      { parameter: "+16 Mesh", min: null, max: 5, unit: "% received" },
+      { parameter: "-50 Mesh", min: null, max: 1, unit: "% Through" }
+    ],
+    "Limited Testing": [
+      { parameter: "Full Testing Only", min: null, max: null, unit: "" }
+    ]
+  },
+
+  "C-211 H": {
+    "Full Testing": [
+      { parameter: "Total Capacity H", min: 2, max: null, unit: "Meq/ml" },
+      { parameter: "Moisture H", min: 44, max: 48, unit: "%" },
+      { parameter: "%H", min: 97, max: 100, unit: "%" },
+      { parameter: "Impurities (Any)", min: 0, max: 50, unit: "ppm" },
+      { parameter: "Whole Beads", min: 90, max: null, unit: "%" },
+      { parameter: "+16 Mesh", min: null, max: 5, unit: "% received" },
+      { parameter: "-50 Mesh", min: null, max: 1, unit: "% Through" },
+      { parameter: "Effective Size", min: 0.54, max: 0.64, unit: "mm" },
+      { parameter: "Uniformity Coefficient", min: 1.2, max: null, unit: "" }
+    ],
+    "Limited Testing": [
+      { parameter: "Full Testing Only", min: null, max: null, unit: "" }
+    ]
+  },
+
+  "C-211 Na": {
+    "Full Testing": [
+      { parameter: "Total Capacity Na", min: 2, max: null, unit: "Meq/ml" },
+      { parameter: "Moisture Na", min: 44, max: 48, unit: "%" },
+      { parameter: "Impurities (Any)", min: 0, max: 50, unit: "ppm" },
+      { parameter: "Whole Beads", min: 90, max: null, unit: "%" },
+      { parameter: "+16 Mesh", min: null, max: 5, unit: "% received" },
+      { parameter: "-50 Mesh", min: null, max: 1, unit: "% Through" }
+    ],
+    "Limited Testing": [
+      { parameter: "Full Testing Only", min: null, max: null, unit: "" }
+    ]
+  }
+};
+// ===== END DATA SECTION =====
+
       }
     ]
   }
